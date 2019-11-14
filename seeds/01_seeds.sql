@@ -39,7 +39,7 @@ INSERT INTO reservations (
   guest_id
   )
 VALUES (
-  Now(-2d),
+  Now(),
   Now(),
   1,
   2
@@ -52,7 +52,7 @@ INSERT INTO reservations (
   guest_id
   )
 VALUES (
-  Now(-2d),
+  Now(),
   Now(),
   1,
   3
@@ -65,7 +65,7 @@ INSERT INTO reservations (
   guest_id
   )
 VALUES (
-  Now(-2d),
+  Now(),
   Now(),
   3,
   2
