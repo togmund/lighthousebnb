@@ -12,9 +12,6 @@ const pool = new Pool({
 
 /// Users
 
-// getUserWithEmail
-// Accepts an email address and will return a promise.
-// The promise should resolve with the user that has that email address, or null if that user does not exist.
 
 /**
  * Get a single user from the database given their email.
@@ -31,8 +28,6 @@ const getUserWithEmail = function(email) {
 }
 exports.getUserWithEmail = getUserWithEmail;
 
-// getUserWithId
-// Will do the same as getUserWithEmail, but using the user's id instead of email.
 
 /**
  * Get a single user from the database given their id.
@@ -49,11 +44,6 @@ const getUserWithId = function(id) {
 }
 exports.getUserWithId = getUserWithId;
 
-// addUser
-// Accepts a user object that will have a name, email, and hashed password property.
-// This function should insert the new user into the database.
-// It will return a promise that resolves with the new user object. This object should contain the user's id after it's been added to the database.
-// Add RETURNING *; to the end of an INSERT query to return the objects that were inserted. This is handy when you need the auto generated id of an object you've just added to the database.
 
 /**
  * Add a new user to the database.
@@ -74,13 +64,29 @@ exports.addUser = addUser;
 
 /// Reservations
 
+
+// Update getAllReservations function to use the lightbnb database with SQL queries.
+
+// This function accepts a guest_id, limits the properties to 10 and returns a promise. The promise should resolve reservations for that user. Use the All My Reservations query that you made in a previous assignments.
+
 /**
  * Get all reservations for a single user.
  * @param {string} guest_id The id of the user.
  * @return {Promise<[{}]>} A promise to the reservations.
  */
 const getAllReservations = function(guest_id, limit = 10) {
-  return getAllProperties(null, 2);
+  return pool.query(`
+      SELECT properties.*, reservations.*, avg(rating) as average_rating
+      FROM reservations
+        JOIN properties ON reservations.property_id = properties.id
+        JOIN property_reviews ON properties.id = property_reviews.property_id 
+      WHERE reservations.guest_id = $1
+        AND reservations.end_date < now()::date
+      GROUP BY properties.id, reservations.id
+      ORDER BY reservations.start_date
+      LIMIT $2;
+  `, [guest_id, limit])
+  .then(res => {return res.rows;});
 }
 exports.getAllReservations = getAllReservations;
 
