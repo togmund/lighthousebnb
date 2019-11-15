@@ -64,11 +64,6 @@ exports.addUser = addUser;
 
 /// Reservations
 
-
-// Update getAllReservations function to use the lightbnb database with SQL queries.
-
-// This function accepts a guest_id, limits the properties to 10 and returns a promise. The promise should resolve reservations for that user. Use the All My Reservations query that you made in a previous assignments.
-
 /**
  * Get all reservations for a single user.
  * @param {string} guest_id The id of the user.
