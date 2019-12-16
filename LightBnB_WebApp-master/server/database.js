@@ -119,8 +119,6 @@ const getAllProperties = function(options, limit = 10) {
   `;
 
   // 3
-  console.log("*********************************************");
-  console.log(options);
   if (options.city) {
     queryParams.push(`%${options.city}%`);
     queryString += `WHERE city ILIKE $${queryParams.length} `;
@@ -184,6 +182,22 @@ const addProperty = function(property) {
   const propertyId = Object.keys(properties).length + 1;
   property.id = propertyId;
   properties[propertyId] = property;
-  return Promise.resolve(property);
+
+  queryParams = [];
+
+  insertInto = [];
+  for (let key in property) {
+    insertInto.push(property[key]);
+  }
+  queryParams.push(insertInto.join());
+
+  queryString = `
+  INSERT INTO properties (
+    title, description, owner_id, cover_photo_url, thumbnail_photo_url, cost_per_night, parking_spaces, number_of_bathrooms, number_of_bedrooms, active, province, city, country, street, post_code) 
+    VALUES ($${queryParams.length})
+    RETURNING *;
+  `;
+  console.log(queryString);
+  return pool.query(queryString, queryParams).then(res => res.rows);
 };
 exports.addProperty = addProperty;
